@@ -14,10 +14,10 @@ export const useFetch = (url) => {
       const data = async () => {
         setLoading(true);
         try {
-          const response = await fetch(url);
-          const result = await response.json();
-          console.log(result);
-          setResult(result);
+          const res = await fetch(url);
+          const data = await res.json();
+          console.log(data);
+          setResult(data);
         } catch (error) {
           setError(error);
         }

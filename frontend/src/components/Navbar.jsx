@@ -1,6 +1,15 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 export const Navbar = () => {
+  const { isLogged } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLogged");
+    navigate("/login");
+  };
+
   return (
     <nav className="bg-gray-800 text-white p-4">
       <div className="container mx-auto">
@@ -9,15 +18,23 @@ export const Navbar = () => {
           <Link to="/" className="hover:underline">
             Inicio
           </Link>
-          <Link to="/login" className="hover:underline">
-            Login
-          </Link>
-          <Link to="/register" className="hover:underline">
-            Register
-          </Link>
-          <Link to="/logout" className="hover:underline">
-            Logout
-          </Link>
+          {!isLogged ? (
+            <>
+              <Link to="/login" className="hover:underline">
+                Login
+              </Link>
+              <Link to="/register" className="hover:underline">
+                Register
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="hover:underline text-red-400"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>
