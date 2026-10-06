@@ -15,6 +15,9 @@ export const Navbar = () => {
           <Link to="/register" className="hover:underline">
             Register
           </Link>
+          <Link to="/logout" className="hover:underline">
+            Logout
+          </Link>
         </div>
       </div>
     </nav>
