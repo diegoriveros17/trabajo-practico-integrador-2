@@ -1,34 +1,53 @@
 import { useState, useEffect } from "react";
 
-export const useFetch = (url) => {
+const URL_API = "http://localhost:3000/api/";
+
+export const useFetch = (endPoint = "", options = {}) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const fetchingData = async (formData = null) => {
+    setIsLoading(true);
+    setError(null);
+
+    const url = `${URL_API}${endPoint}`;
+
+    const fetchOptions = {
+      credentials: "include",
+      ...options,
+    };
+
+    if (formData) {
+      fetchOptions.body = JSON.stringify(formData);
+    }
+
+    try {
+      const res = await fetch(url, fetchOptions);
+      const data = await res.json();
+
+      if (!res.ok) {
+        // throw new Error(data || `Error HTTP: ${res.status}`);
+        setError(data);
+        setData(null);
+        return null;
+      }
+
+      setData(data);
+      return data;
+    } catch (err) {
+      setError(err.message || "Ocurrió un error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const [error, setError] = useState();
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState([]);
+    const method = options.method ? options.method.toUpperCase() : "GET";
+    if (endPoint && method === "GET") {
+      fetchingData();
+    }
+  }, [endPoint]);
 
-    useEffect(() => {
-      const data = async () => {
-        setLoading(true);
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-          console.log(data);
-          setResult(data);
-        } catch (error) {
-          setError(error);
-        }
-        setLoading(false);
-      };
-
-      data;
-    }, [url]);
-
-    return { error, loading, result };
-  }, [url]);
-
-  return { data, loading, error };
+  return { data, isLoading, error, fetchingData };
 };

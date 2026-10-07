@@ -21,6 +21,12 @@ Aplicación en React con Vite que funciona como frontend del Trabajo Práctico I
 - Vite
 - Tailwind Css
 
+## Instalación y Ejecución
+
+1. Clonar el repositorio del backend ([TP Integrador N° 1](https://github.com/diegoriveros17/trabajo-practico-integrador-1.git)) en una carpeta llamada `backend` y este repositorio en una carpeta llamada `frontend`.
+2. Abrir dos terminales, ingresar a cada carpeta correspondiente (`cd backend` y `cd frontend`) y ejecutar `npm install` para instalar las dependencias.
+3. Iniciar ambos proyectos simultáneamente ejecutando `npm run dev` en cada una de las terminales.
+
 **Materia:** Taller de Lenguaje de Programación II
 **Año:** 2026
 

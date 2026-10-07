@@ -1,41 +1,44 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "../hooks/userForm";
+import { useFetch } from "../hooks/useFetch";
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
-
-  const [form, setForm] = useState({
+  const { form, handleChange } = useForm({
     username: "",
     email: "",
     password: "",
     first_name: "",
     last_name: "",
   });
+
+  const { fetchingData, isLoading, error } = useFetch("register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
   const { username, email, password, first_name, last_name } = form;
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (email === "marcos@email.com") {
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 2000);
-      return;
+    try {
+      const res = await fetchingData({
+        username,
+        email,
+        password,
+        first_name,
+        last_name,
+      });
+
+      // console.log(res);
+      if (res) {
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Error al iniciar sesión:", err);
     }
-
-    navigate("/login");
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
   };
 
   return (
@@ -79,7 +82,7 @@ export const RegisterPage = () => {
               <input
                 type="password"
                 className="mt-1 w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="••••••••"
+                placeholder="******"
                 value={password}
                 onChange={handleChange}
                 name="password"
@@ -121,10 +124,18 @@ export const RegisterPage = () => {
             >
               Registarme
             </button>
-            {error && (
-              <p className="text-red-500 text-sm text-center mt-2">
-                Nombre de usuario o contraseña incorrectos.
-              </p>
+
+            {error && error.length > 0 && (
+              <ul>
+                {error.map((err, index) => (
+                  <li
+                    className="text-red-500 text-sm text-center mt-2"
+                    key={index}
+                  >
+                    {err}
+                  </li>
+                ))}
+              </ul>
             )}
           </form>
           <p className="mt-4 text-sm text-center text-gray-600">

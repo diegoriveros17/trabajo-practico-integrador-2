@@ -1,46 +1,34 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+// import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/userForm";
+import { useFetch } from "../hooks/useFetch";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-
   const { form, handleChange } = useForm({
     username: "",
     password: "",
   });
 
+  const { fetchingData, isLoading, error } = useFetch("login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+
   const { username, password } = form;
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log("Datos a enviar:", form);
     try {
-      const res = await fetch("http://localhost:3000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await fetchingData({ username, password });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "Error al iniciar sesión");
-        return;
+      console.log(res);
+      if (res.token) {
+        localStorage.setItem("isLogged", "true");
+        return navigate("/home");
       }
-
-      navigate("/home");
-    } catch {
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 2000);
-      return;
-    }
+    } catch (err) {}
   };
 
   return (
@@ -84,8 +72,17 @@ export const LoginPage = () => {
             Iniciar sesión
           </button>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+          {error && error.length > 0 && (
+            <ul>
+              {error.map((err, index) => (
+                <li
+                  className="text-red-500 text-sm text-center mt-2"
+                  key={index}
+                >
+                  {err}
+                </li>
+              ))}
+            </ul>
           )}
         </form>
 
