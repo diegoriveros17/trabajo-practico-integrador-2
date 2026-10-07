@@ -2,6 +2,7 @@
 import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/userForm";
 import { useFetch } from "../hooks/useFetch";
+import { useAuth } from "../hooks/useAuth";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export const LoginPage = () => {
     username: "",
     password: "",
   });
+  const { login } = useAuth();
 
   const { fetchingData, isLoading, error } = useFetch("login", {
     method: "POST",
@@ -25,7 +27,7 @@ export const LoginPage = () => {
 
       console.log(res);
       if (res.token) {
-        localStorage.setItem("isLogged", "true");
+        login(res);
         return navigate("/home");
       }
     } catch (err) {}
