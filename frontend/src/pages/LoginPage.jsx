@@ -1,9 +1,10 @@
 // import { useState } from "react";
-import { Link, Navigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/userForm";
 import { useFetch } from "../hooks/useFetch";
 
 export const LoginPage = () => {
+  const navigate = useNavigate();
   const { form, handleChange } = useForm({
     username: "",
     password: "",
@@ -22,7 +23,7 @@ export const LoginPage = () => {
     try {
       const res = await fetchingData({ username, password });
 
-      // console.log(res);
+      console.log(res);
       if (res.token) {
         localStorage.setItem("isLogged", "true");
         return navigate("/home");
