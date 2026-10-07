@@ -16,18 +16,22 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (email === "marcos@email.com") {
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 2000);
-      return;
-    }
+    try {
+      const res = await fetchingData({ username, password });
 
-    navigate("/login");
+      // console.log(res);
+      if (!res) {
+        setError(true);
+        setTimeout(() => {
+          setError(false);
+        }, 2000);
+        return;
+      }
+      navigate("/login");
+    } catch (err) {}
   };
 
   const handleChange = (event) => {
